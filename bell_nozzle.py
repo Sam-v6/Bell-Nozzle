@@ -1,10 +1,14 @@
-import math
-import numpy as np
-import matplotlib.pyplot as plt
+#!/usr/bin/env python
 
-from matplotlib.patches import Arc
+# Standard Libraries
+import os
+import math
 from bisect import bisect_left
 
+# Third Party Libraries
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Arc
 
 """
  Implemented from the following technical notes 
@@ -65,7 +69,7 @@ Qy = (m1 C2 − m2 C1 ) / (m1 − m2 ) [Eqn. 10]
 .................................................................
 """
 	
-# sp.heat, area_ratio, throat_radius, length percentage, 
+# sp.heat, area_ratio, Rt, length percentage, 
 def bell_nozzle(k, aratio, Rt, l_percent):
 	# upto the nozzle designer, usually -135
 	entrant_angle  	= -135
@@ -77,7 +81,7 @@ def bell_nozzle(k, aratio, Rt, l_percent):
 	elif l_percent == 90:	Lnp = 0.9	
 	else:					Lnp = 0.8
 	# find wall angles (theta_n, theta_e) for given aratio (ar)		
-	angles = find_wall_angles(aratio, throat_radius, l_percent)
+	angles = find_wall_angles(aratio, Rt, l_percent)
 	# wall angles
 	nozzle_length = angles[0]; theta_n = angles[1]; theta_e = angles[2];
 
@@ -86,7 +90,7 @@ def bell_nozzle(k, aratio, Rt, l_percent):
 	ea_start 		= ea_radian
 	ea_end 			= -math.pi/2	
 	angle_list 		= np.linspace(ea_start, ea_end, data_intervel)
-	xe = []; ye = [];
+	xe = []; ye = []
 	for i in angle_list:
 		xe.append( 1.5 * Rt * math.cos(i) )
 		ye.append( 1.5 * Rt * math.sin(i) + 2.5 * Rt )
@@ -95,7 +99,7 @@ def bell_nozzle(k, aratio, Rt, l_percent):
 	ea_start 		= -math.pi/2
 	ea_end 			= theta_n - math.pi/2
 	angle_list 		= np.linspace(ea_start, ea_end, data_intervel)	
-	xe2 = []; ye2 = [];
+	xe2 = []; ye2 = []
 	for i in angle_list:
 		xe2.append( 0.382 * Rt * math.cos(i) )
 		ye2.append( 0.382 * Rt * math.sin(i) + 1.382 * Rt )
@@ -108,9 +112,9 @@ def bell_nozzle(k, aratio, Rt, l_percent):
 	Ex = Lnp * ( (math.sqrt(aratio) - 1) * Rt )/ math.tan(math.radians(15) )
 	Ey = math.sqrt(aratio) * Rt 
 	# gradient m1,m2 - [Eqn. 8]
-	m1 = math.tan(theta_n);  m2 = math.tan(theta_e);
+	m1 = math.tan(theta_n);  m2 = math.tan(theta_e)
 	# intercept - [Eqn. 9]
-	C1 = Ny - m1*Nx;  C2 = Ey - m2*Ex;
+	C1 = Ny - m1*Nx;  C2 = Ey - m2*Ex
 	# intersection of these two lines (at point Q)-[Eqn.10]
 	Qx = (C2 - C1)/(m1 - m2)
 	Qy = (m1*C2 - m2*C1)/(m1 - m2)	
@@ -216,7 +220,7 @@ def find_nearest(array, value):
     return idx, array[idx]  
 
 # nozzle contour plot
-def plot_nozzle(ax, title, Rt, angles, contour):
+def plot_nozzle(ax, title, aratio, Rt, angles, contour):
 	# wall angles
 	nozzle_length = angles[0]; theta_n = angles[1]; theta_e = angles[2];
 	
@@ -235,8 +239,8 @@ def plot_nozzle(ax, title, Rt, angles, contour):
 	ax.plot(xe, nye, linewidth=2.5, color='g')
 	
 	# throat inlet line
-	x1 = xe[0]; y1 = 0;
-	x2 = xe[0]; y2 = nye[0];
+	x1 = xe[0]; y1 = 0
+	x2 = xe[0]; y2 = nye[0]
 	dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 	# draw arrow, inlet radial line [x1, y1] to [x2, y2] 
 	text = ' Ri = '+ str(round(dist,1))
@@ -324,7 +328,9 @@ def plot_nozzle(ax, title, Rt, angles, contour):
 	
 	# show
 	plt.title(title, fontsize=9)
-	return
+
+	# Return
+	return 0
 
 # theta_n in rad,  origin =[startx, starty], degree symbol
 def draw_angle_arc(ax, theta_n, origin, degree_symbol=r'$\theta$'):
@@ -342,7 +348,7 @@ def draw_angle_arc(ax, theta_n, origin, degree_symbol=r'$\theta$'):
 	arc_obj = Arc([startx, starty], 1, 1, angle=0, theta1=0, theta2=math.degrees(theta_n), color='k' )
 	ax.add_patch(arc_obj)
 	ax.text(startx+0.5, starty+0.5, degree_symbol + ' = ' + str(round(theta_n,1)) + u"\u00b0")	
-	return
+	return 0
 
 # ring of radius r, height h, base point a
 def ring(r, h, a=0, n_theta=30, n_height=10):
@@ -368,7 +374,7 @@ def set_axes_equal_3d(ax: plt.Axes):
     origin = np.mean(limits, axis=1)
     radius = 0.5 * np.max(np.abs(limits[:, 1] - limits[:, 0]))
     _set_axes_radius(ax, origin, radius)
-    return
+    return 0
 
 # set axis limits
 def _set_axes_radius(ax, origin, radius):
@@ -376,7 +382,7 @@ def _set_axes_radius(ax, origin, radius):
     ax.set_xlim3d([x - radius, x + radius])
     ax.set_ylim3d([y - radius, y + radius])
     ax.set_zlim3d([z - radius, z + radius])
-    return
+    return 0
 
 # 3d plot
 def plot3D(ax, contour):
@@ -403,47 +409,50 @@ def plot3D(ax, contour):
 	set_axes_equal_3d(ax)
 	# set view
 	ax.view_init(-170, -15)
-	return
+	return 0
 
-def plot(title, throat_radius, angles, contour):
-	# Plot 3d view
-	fig = plt.figure(figsize=(12,9))
-	# plot some 2d information
-	ax1 = fig.add_subplot(121)
-	plot_nozzle(ax1, title, throat_radius, angles, contour)
-	# plot 3d view
-	ax2 = fig.add_subplot(122, projection='3d')
-	plot3D(ax2, contour)	
-	# show
-	fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-	plt.show()
-	return
+# plot driver
+def plot(title, aratio, Rt, angles, contour, image_path=None):
 
-# __main method__
-if __name__=="__main__":
-	
-	# constants
-	k 	= 1.21		# ratio of specific heats
-	l_percent = 60	# nozzle length percntage (60, 80, 90)
-	
-	# typical upper stage values
-	aratio = 25 			# Ae / At	
-	throat_radius = 40 		# {'radius_throat': 40, 'radius_exit': 210}		
+	if image_path is not None:
+		# Split into base and extension and customie name.png
+		base, ext = os.path.splitext(image_path)
+		image_path_2d = f"{base}_2d{ext}"
+		image_path_3d = f"{base}_3d{ext}"
 
-	# rao_bell_nozzle_contour
-	angles, contour = bell_nozzle(k, aratio, throat_radius, l_percent)
-	# plot contour
-	title = 'Bell Nozzle \n [Area Ratio = ' + str(round(aratio,1)) + ', Throat Radius = ' + str(round(throat_radius,1)) + ']' 
-	plot(title, throat_radius, angles, contour)
+		# Plot 2D view
+		fig, ax = plt.subplots(figsize=(12, 9), dpi=600)
+		# plot some 2d information
+		plot_nozzle(ax, title, aratio, Rt, angles, contour)
+		# Save
+		plt.savefig(image_path_2d, dpi=600)
+		plt.clf()
+		plt.close()
 
-	# --------------- Nozzle-2------------------
+		# Plot 3D view
+		fig = plt.figure(figsize=(12, 9), dpi=600)
+		ax = fig.add_subplot(111, projection='3d')
+		plot3D(ax, contour)	
+		# Save
+		plt.savefig(image_path_3d, dpi=600)
+		plt.clf()
+		plt.close()
+		# Return
+		return 0
 
-	# typical lower stage booster values
-	aratio = 7 				# Ae / At	
-	throat_radius = 800 	# 	
+	else:
+		# Plot 2D view
+		fig = plt.figure(figsize=(12,9))
+		# plot some 2d information
+		ax1 = fig.add_subplot(121)
+		plot_nozzle(ax1, title, aratio, Rt, angles, contour)
 
-	# rao_bell_nozzle_contour
-	angles, contour = bell_nozzle(k, aratio, throat_radius, l_percent)
-	# plot contour
-	title = 'Bell Nozzle \n [Area Ratio = ' + str(round(aratio,1)) + ', Throat Radius = ' + str(round(throat_radius,1)) + ']' 
-	plot(title, throat_radius, angles, contour)
+		# Plot 3D view
+		ax2 = fig.add_subplot(122, projection='3d')
+		plot3D(ax2, contour)	
+		# show
+		fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+		plt.show()
+		# Return
+		return 0
+
