@@ -220,14 +220,14 @@ def find_nearest(array, value):
     return idx, array[idx]  
 
 # nozzle contour plot
-def plot_nozzle(ax, title, aratio, Rt, angles, contour):
+def plot_nozzle(ax, title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS=True):
 	# wall angles
-	nozzle_length = angles[0]; theta_n = angles[1]; theta_e = angles[2];
+	nozzle_length = angles[0]; theta_n = angles[1]; theta_e = angles[2]
 	
 	# contour values
-	xe = contour[0];   	ye = contour[1];   	nye = contour[2];
-	xe2 = contour[3]; 	ye2 = contour[4];  	nye2 = contour[5];
-	xbell = contour[6]; ybell = contour[7]; nybell = contour[8];
+	xe = contour[0];   	ye = contour[1];   	nye = contour[2]
+	xe2 = contour[3]; 	ye2 = contour[4];  	nye2 = contour[5]
+	xbell = contour[6]; ybell = contour[7]; nybell = contour[8]
 	
 	# plot
 
@@ -242,79 +242,84 @@ def plot_nozzle(ax, title, aratio, Rt, angles, contour):
 	x1 = xe[0]; y1 = 0
 	x2 = xe[0]; y2 = nye[0]
 	dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-	# draw arrow, inlet radial line [x1, y1] to [x2, y2] 
-	text = ' Ri = '+ str(round(dist,1))
-	ax.plot(xe[0], 0, '+' )
-	# draw dimension from [x1, y1] to [x2, y2] 
-	ax.annotate( "", [x1, y1], [x2, y2] , arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text((x1+x2)/2, (y1+y2)/2, text, fontsize=9 )	
 
-	# nozzle inlet length line [0,0] to [xe[0], 0]
-	text = ' Li = ' + str( round( abs(xe[0]), 1) ) 
-	ax.plot(0,0, '+' )
-	# draw dimension from [0,0] to [xe[0], 0]
-	ax.annotate( "", [0,0], [xe[0], 0], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text( xe[0], 0, text, fontsize=9 )	
+	if ENABLE_ANNOTATIONS:
+		# draw arrow, inlet radial line [x1, y1] to [x2, y2] 
+		text = ' Ri = '+ str(round(dist,1))
+		ax.plot(xe[0], 0, '+' )
+		# draw dimension from [x1, y1] to [x2, y2] 
+		ax.annotate( "", [x1, y1], [x2, y2] , arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text((x1+x2)/2, (y1+y2)/2, text, fontsize=9 )	
+
+		# nozzle inlet length line [0,0] to [xe[0], 0]
+		text = ' Li = ' + str( round( abs(xe[0]), 1) ) 
+		ax.plot(0,0, '+' )
+		# draw dimension from [0,0] to [xe[0], 0]
+		ax.annotate( "", [0,0], [xe[0], 0], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text( xe[0], 0, text, fontsize=9 )	
 		
-	# find mid point and draw arc radius
-	i = int(len(xe)/2)
-	xcenter = 0; 	ycenter = 2.5 * Rt;  
-	xarch = xe[i];  yarch = ye[i]
-	# draw arrow, enterant radial line [xcenter, ycenter] to [xarch, yarch] 
-	text = ' 1.5 * Rt = '+ str( round( 1.5 * Rt, 1 ) ) 
-	ax.plot(xcenter, ycenter, '+' )
-	# draw dimension from [xcenter, ycenter] to [xarch, yarch]
-	ax.annotate( "", [xcenter, ycenter], [xarch, yarch], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text((xarch+xcenter)/2, (yarch+ycenter)/2, text, fontsize=9 )	
+		# find mid point and draw arc radius
+		i = int(len(xe)/2)
+		xcenter = 0; 	ycenter = 2.5 * Rt;  
+		xarch = xe[i];  yarch = ye[i]
+		# draw arrow, enterant radial line [xcenter, ycenter] to [xarch, yarch] 
+		text = ' 1.5 * Rt = '+ str( round( 1.5 * Rt, 1 ) ) 
+		ax.plot(xcenter, ycenter, '+' )
+		# draw dimension from [xcenter, ycenter] to [xarch, yarch]
+		ax.annotate( "", [xcenter, ycenter], [xarch, yarch], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text((xarch+xcenter)/2, (yarch+ycenter)/2, text, fontsize=9 )	
 		
-	# throat radius line [0,0] to [xe[-1], ye[-1]]
-	text = ' Rt = '+ str(Rt)
-	# draw dimension from [0,0] to [xe[-1], ye[-1]]
-	ax.annotate( "", [0,0], [xe[-1], ye[-1]], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text( xe[-1]/2, ye[-1]/2, text, fontsize=9 )	
+		# throat radius line [0,0] to [xe[-1], ye[-1]]
+		text = ' Rt = '+ str(Rt)
+		# draw dimension from [0,0] to [xe[-1], ye[-1]]
+		ax.annotate( "", [0,0], [xe[-1], ye[-1]], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text( xe[-1]/2, ye[-1]/2, text, fontsize=9 )	
 
 	# throat exit
 	ax.plot(xe2, ye2, linewidth=2.5, color='r')
 	ax.plot(xe2, nye2, linewidth=2.5, color='r')
-	# find mid point and draw arc radius
-	i = int(len(xe2)/2)
-	xcenter2 = 0; 	ycenter2 = 1.382 * Rt;  
-	xarch2 = xe2[i];  yarch2 = ye2[i]
-	# draw arrow, exit radial line from [xcenter2,ycenter2] to [xarch2, yarch2]
-	text = ' 0.382 * Rt = '+ str( round(0.382 * Rt,1) ) 
-	ax.plot(xcenter2, ycenter2, '+' )
-	# draw dimension from [xcenter2,ycenter2] to [xarch2, yarch2]
-	ax.annotate( "", [xcenter2,ycenter2], [xarch2, yarch2], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text((xarch2+xcenter2)/2, (yarch2+ycenter2)/2, text, fontsize=9 )
+	
+	if ENABLE_ANNOTATIONS:
+		# find mid point and draw arc radius
+		i = int(len(xe2)/2)
+		xcenter2 = 0; 	ycenter2 = 1.382 * Rt;  
+		xarch2 = xe2[i];  yarch2 = ye2[i]
+		# draw arrow, exit radial line from [xcenter2,ycenter2] to [xarch2, yarch2]
+		text = ' 0.382 * Rt = '+ str( round(0.382 * Rt,1) ) 
+		ax.plot(xcenter2, ycenter2, '+' )
+		# draw dimension from [xcenter2,ycenter2] to [xarch2, yarch2]
+		ax.annotate( "", [xcenter2,ycenter2], [xarch2, yarch2], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text((xarch2+xcenter2)/2, (yarch2+ycenter2)/2, text, fontsize=9 )
 
-	# draw theta_n, throat inflexion angle
-	adj_text = 2
-	origin	= [ xe2[-1], nye2[-1]-adj_text ]
-	degree_symbol = r'$\theta$n'	
-	draw_angle_arc(ax, theta_n, origin, degree_symbol )
+		# draw theta_n, throat inflexion angle
+		adj_text = 2
+		origin	= [ xe2[-1], nye2[-1]-adj_text ]
+		degree_symbol = r'$\theta$n'	
+		draw_angle_arc(ax, theta_n, origin, degree_symbol )
 
 	# bell section
 	ax.plot(xbell, ybell, linewidth=2.5, color='b')
 	ax.plot(xbell, nybell, linewidth=2.5, color='b')
 
-	# throat radius line [0,0] to [xe[-1], ye[-1]]
-	text = ' Re = ' + str( round( (math.sqrt(aratio) * Rt), 1) ) 
-	ax.plot(xbell[-1],0, '+' )
-	# draw dimension from [0,0] to [xe[-1], ye[-1]]
-	ax.annotate( "", [xbell[-1],0], [xbell[-1], ybell[-1]], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text( xbell[-1], ybell[-1]/2, text, fontsize=9 )	
+	if ENABLE_ANNOTATIONS:
+		# throat radius line [0,0] to [xe[-1], ye[-1]]
+		text = ' Re = ' + str( round( (math.sqrt(aratio) * Rt), 1) ) 
+		ax.plot(xbell[-1],0, '+' )
+		# draw dimension from [0,0] to [xe[-1], ye[-1]]
+		ax.annotate( "", [xbell[-1],0], [xbell[-1], ybell[-1]], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text( xbell[-1], ybell[-1]/2, text, fontsize=9 )	
 
-	# draw theta_n, throat exit angle
-	origin	= [ xbell[-1], nybell[-1] ]
-	degree_symbol = r'$\theta$e'	
-	draw_angle_arc(ax, theta_e, origin, degree_symbol )
+		# draw theta_n, throat exit angle
+		origin	= [ xbell[-1], nybell[-1] ]
+		degree_symbol = r'$\theta$e'	
+		draw_angle_arc(ax, theta_e, origin, degree_symbol )
 
-	# nozzle length line [0,0] to [xe[-1], ye[-1]]
-	text = ' Ln = ' + str( round( nozzle_length, 1) ) 
-	ax.plot(0,0, '+' )
-	# draw dimension from [0,0] to [xbell[-1], 0]
-	ax.annotate( "", [0,0], [xbell[-1], 0], arrowprops=dict(lw=0.5, arrowstyle='<-') )
-	ax.text( xbell[-1]/2, 0, text, fontsize=9 )	
+		# nozzle length line [0,0] to [xe[-1], ye[-1]]
+		text = ' Ln = ' + str( round( nozzle_length, 1) ) 
+		ax.plot(0,0, '+' )
+		# draw dimension from [0,0] to [xbell[-1], 0]
+		ax.annotate( "", [0,0], [xbell[-1], 0], arrowprops=dict(lw=0.5, arrowstyle='<-') )
+		ax.text( xbell[-1]/2, 0, text, fontsize=9 )	
 				
 	# axis
 	ax.axhline(color='black', lw=0.5, linestyle="dashed")
@@ -387,9 +392,9 @@ def _set_axes_radius(ax, origin, radius):
 # 3d plot
 def plot3D(ax, contour):
 	# unpack the contour values
-	xe = contour[0];   	ye = contour[1];   	nye = contour[2];
-	xe2 = contour[3]; 	ye2 = contour[4];  	nye2 = contour[5];
-	xbell = contour[6]; ybell = contour[7]; nybell = contour[8];
+	xe = contour[0];   	ye = contour[1];   	nye = contour[2]
+	xe2 = contour[3]; 	ye2 = contour[4];  	nye2 = contour[5]
+	xbell = contour[6]; ybell = contour[7]; nybell = contour[8]
 	# collect and append array values
 	x = []; y = [];
 	x = np.append(x, xe);  y = np.append(y, ye)	
@@ -412,7 +417,7 @@ def plot3D(ax, contour):
 	return 0
 
 # plot driver
-def plot(title, aratio, Rt, angles, contour, image_path=None):
+def plot(title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS, image_path=None):
 
 	if image_path is not None:
 		# Split into base and extension and customie name.png
@@ -423,7 +428,7 @@ def plot(title, aratio, Rt, angles, contour, image_path=None):
 		# Plot 2D view
 		fig, ax = plt.subplots(figsize=(12, 9), dpi=600)
 		# plot some 2d information
-		plot_nozzle(ax, title, aratio, Rt, angles, contour)
+		plot_nozzle(ax, title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS)
 		# Save
 		plt.savefig(image_path_2d, dpi=600)
 		plt.clf()
@@ -445,7 +450,7 @@ def plot(title, aratio, Rt, angles, contour, image_path=None):
 		fig = plt.figure(figsize=(12,9))
 		# plot some 2d information
 		ax1 = fig.add_subplot(121)
-		plot_nozzle(ax1, title, aratio, Rt, angles, contour)
+		plot_nozzle(ax1, title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS)
 
 		# Plot 3D view
 		ax2 = fig.add_subplot(122, projection='3d')

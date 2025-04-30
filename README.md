@@ -120,22 +120,49 @@ Qy = (m1 C2 − m2 C1 ) / (m1 − m2 ) [Eqn. 10]
 ***    
 
 ## Setup
-Script is written with python (Version: 3.6) on linux. Additional modules required :   
+Create a virtual environment called `venv`
+`python -m venv venv`
 
-* numpy  (tested with Version: 1.18.4 )
-* matplotlib  (tested with Version: 2.1.1 )
+If on Linux, source your virtual environment with the following command:
+`source venv/bin/activate`
 
+Alternatively, if on Windows you can source the virtual environment with the folllowing command via the command prompt (`cmd`):
+`venv\Scripts\activate.bat`
+
+Once the virtual env is sourced, install the python packages:
+`pip install -r requirements.txt`
 
 ## How to run   
-* Verify and install required modules  
-* Modify in main function, the variables  
-'aratio = 7.72',   
-'throat_radius = 40' and  
-'l_percent = 80' (only 60, 80 and 90 data values are built-in)
-* run `python bell_nozzle.py` 
+The file `example.py` shows how a user can run the code in two ways, where images can be displayed or saved off to a png and with optional annotations.
+
+For either method make sure to set:
+* `k` (Ratio of specific heats)
+* `l_percent` (Nozzle length percentage)
+* `aratio` (Area of exit / Area of throat)
+* `Rt` (Radius of throat)
+
+Then call the following function to return the rao bell nozzle contour:
+`angles, contour = bell_nozzle(k, aratio, Rt, l_percent)`
+
+To simply show the plots after the code executes (and perhaps with annotations):
+- Declare a `title`
+- Set `ENABLE_ANNOTATIONS` to `True`
+- Then call:
+`plot(title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS)`
+
+To optionally save the plots off to a png instead (and perhaps turn off the annotations):
+- Declare a `title`
+- Set `ENABLE_ANNOTATIONS` to `False`
+- Define a fully qualified `image_path`
+- Then call:
+`plot(title, aratio, Rt, angles, contour, ENABLE_ANNOTATIONS, image_path)`
+
+A user can simply run the example code as well to see both versions run with:
+`python example.py` (or `python3 example.py` if the user has not added python3 to the path)
 
 ## Updates   
 * [29Jan2021] - Included a 3D view along with the 2D contour plot
+* [30Apr2025] - Allowing for discrete calls where the plots can be saved with optional annotations, adding basic github actions, and requirements.txt for virtual env
 
 
 ## To-do list
